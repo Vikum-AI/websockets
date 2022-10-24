@@ -12,22 +12,23 @@ function Home() {
   >("noChange");
 
   const getValue = () => {
-    // setPrevValue(value);
+    setPrevValue(value);
     socket.emit("send_value");
   };
 
   useEffect(() => {
     socket.on("receive_value", (data: number) => {
-      setValue((initValue) => {
-        initValue && setPrevValue(initValue);
-        return data;
-      });
+      setValue(data);
       console.log(prevValue, data);
-      prevValue && data > prevValue
-        ? setColorState("increased")
-        : setColorState("decreased");
+      if (prevValue && data > prevValue) {
+        setColorState("increased");
+        console.log("increased", data, prevValue);
+      } else if (prevValue && data < prevValue) {
+        setColorState("decreased");
+        console.log("decreased", data, prevValue);
+      }
     });
-  }, [socket]);
+  }, [socket, prevValue]);
 
   return (
     <div className="m-4">
